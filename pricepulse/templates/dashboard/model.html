@@ -1,0 +1,63 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}AI Model{% endblock %}
+{% block page_title %}AI Model{% endblock %}
+{% block page_sub %}Model performance and retraining{% endblock %}
+
+{% block content %}
+{% if metadata %}
+<div class="grid grid-4 mb-24">
+  <div class="card kpi-card"><div class="label">Model</div><div class="value" style="font-size:16px;">{{ metadata.algorithm }}</div></div>
+  <div class="card kpi-card"><div class="label">Training Records</div><div class="value">{{ metadata.training_records }}</div></div>
+  <div class="card kpi-card"><div class="label">R² Score</div><div class="value">{{ metadata.r2_score }}</div></div>
+  <div class="card kpi-card"><div class="label">Last Trained</div><div class="value" style="font-size:15px;">{{ metadata.trained_at|date:"M j, Y H:i" }}</div></div>
+</div>
+<div class="grid grid-2 mb-24">
+  <div class="card">
+    <div class="section-title mb-12">Error Metrics</div>
+    <div class="flex-between mb-12"><span class="text-muted">Mean Absolute Error (MAE)</span><strong>{{ metadata.mae }} units</strong></div>
+    <div class="flex-between mb-12"><span class="text-muted">Root Mean Squared Error (RMSE)</span><strong>{{ metadata.rmse }} units</strong></div>
+    <div class="flex-between"><span class="text-muted">R² Score</span><strong>{{ metadata.r2_score }}</strong></div>
+    <p class="text-sm text-muted" style="margin-top:14px;">These are calculated on a held-out 20% test split of real sales records, not simulated.</p>
+  </div>
+  <div class="card">
+    <div class="section-title mb-12">Features Used</div>
+    <ul>
+      {% for f in metadata.features_used %}<li class="text-sm mb-8">• {{ f }}</li>{% endfor %}
+    </ul>
+  </div>
+</div>
+{% else %}
+<div class="card empty-state mb-24">
+  <h3>No trained model yet</h3>
+  <p>Import at least 30 sales records, then retrain to unlock demand forecasts and smart pricing.</p>
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="section-title mb-8">Retrain Model</div>
+  <p class="text-sm text-muted mb-16">Retraining runs the full pipeline: load sales data → validate → engineer features → train/test split → train RandomForestRegressor → evaluate → save.</p>
+  <button class="btn btn-accent" id="retrain-btn">Retrain Model</button>
+  <span id="retrain-status" class="text-sm text-muted" style="margin-left:12px;"></span>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.getElementById("retrain-btn").addEventListener("click", async () => {
+  const btn = document.getElementById("retrain-btn");
+  const status = document.getElementById("retrain-status");
+  btn.disabled = true;
+  status.textContent = "Training in progress…";
+  try {
+    const result = await ppFetch("/api/model/retrain/", { method: "POST" });
+    ppToast(result.detail || "Model retrained", "success");
+    setTimeout(() => window.location.reload(), 800);
+  } catch (e) {
+    ppToast(e.message, "error");
+    status.textContent = "";
+    btn.disabled = false;
+  }
+});
+</script>
+{% endblock %}

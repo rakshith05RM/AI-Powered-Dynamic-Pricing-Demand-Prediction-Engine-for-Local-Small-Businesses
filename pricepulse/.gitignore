@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+db.sqlite3
+.env
+media/
+staticfiles/
+ml_models/trained_models/*.joblib
+!ml_models/trained_models/.gitkeep
+*.egg-info/
+.DS_Store

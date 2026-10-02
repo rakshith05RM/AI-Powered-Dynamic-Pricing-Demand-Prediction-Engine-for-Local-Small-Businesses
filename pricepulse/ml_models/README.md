@@ -1,0 +1,1 @@
+This folder documents the ML pipeline structure. Actual feature engineering lives in forecasting/services/features.py, training in forecasting/management/commands/train_demand_model.py, and prediction in forecasting/services/demand_predictor.py, so they can import Django models cleanly.

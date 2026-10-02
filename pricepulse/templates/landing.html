@@ -1,0 +1,150 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PricePulse — AI Demand Forecasting & Dynamic Pricing</title>
+<meta name="description" content="AI-powered demand forecasting and dynamic pricing built for local businesses.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/landing.css' %}">
+</head>
+<body>
+
+<nav class="lp-nav">
+  <div class="logo">
+    <svg width="20" height="20" viewBox="0 0 22 22" fill="none"><rect width="22" height="22" rx="6" fill="#2563eb"/><path d="M6 15.5V7.5C6 7.5 7 6.5 9 6.5C11.5 6.5 11.5 9 9 9C7.5 9 6 9 6 9" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 15.5L13 11.5C13 11.5 13.8 10.5 15 10.5C16.8 10.5 16.8 12.7 15 12.7C13.9 12.7 13 12.7 13 12.7" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/></svg>
+    PricePulse
+  </div>
+  <div class="lp-nav-links">
+    <a href="#how-it-works">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#comparison">Comparison</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <div class="lp-nav-actions">
+    <a href="{% url 'accounts_login' %}" class="btn btn-secondary btn-sm">Log In</a>
+    <a href="{% url 'accounts_register' %}" class="btn btn-accent btn-sm">Get Started</a>
+  </div>
+</nav>
+
+<section class="lp-hero">
+  <h1>Know what will sell.<br>Price it smarter.</h1>
+  <p>AI-powered demand forecasting and dynamic pricing built for local businesses.</p>
+  <div class="lp-hero-actions">
+    <a href="{% url 'accounts_register' %}" class="btn btn-primary">Get Started</a>
+    <a href="{% url 'accounts_login' %}" class="btn btn-secondary">View Demo</a>
+  </div>
+  <div class="lp-hero-stat-strip">
+    <div><strong>27</strong><span>units predicted for Saturday's chocolate cake demand</span></div>
+    <div><strong>92.6%</strong><span>R² accuracy on held-out sales data</span></div>
+    <div><strong>₹11,475</strong><span>expected revenue from one price recommendation</span></div>
+  </div>
+</section>
+
+<section class="lp-section" id="how-it-works">
+  <div class="lp-section-head">
+    <h2>From sales data to smarter prices</h2>
+    <p>PricePulse learns from your own history — no guesswork, no generic industry averages.</p>
+  </div>
+  <div class="lp-steps">
+    <div class="lp-step"><div class="num">1</div><h4>Import your sales</h4><p>Upload historical sales via CSV, or record them as you go.</p></div>
+    <div class="lp-step"><div class="num">2</div><h4>Train the model</h4><p>A Random Forest model learns your demand patterns — day of week, season, promotions.</p></div>
+    <div class="lp-step"><div class="num">3</div><h4>Get forecasts & prices</h4><p>See predicted demand and AI-recommended prices for every product.</p></div>
+    <div class="lp-step"><div class="num">4</div><h4>Apply with confidence</h4><p>Apply recommendations in one click, within limits you control.</p></div>
+  </div>
+</section>
+
+<section class="lp-section" id="features">
+  <div class="lp-section-head">
+    <h2>Everything you need to price with confidence</h2>
+  </div>
+  <div class="lp-grid-3">
+    <div class="lp-feature">
+      <svg class="feature-icon" viewBox="0 0 24 24" fill="none"><path d="M3 19L9 12L13 15L21 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6H21V12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h3>AI demand forecasting</h3><p>Predict how many units of each product you'll sell — by day, by product, by season — using a model trained on your own sales history.</p>
+    </div>
+    <div class="lp-feature">
+      <svg class="feature-icon" viewBox="0 0 24 24" fill="none"><path d="M12.5 3H19C19.55 3 20 3.45 20 4V10.5L12 18.5C11.5 19 10.7 19 10.2 18.5L4.5 12.8C4 12.3 4 11.5 4.5 11L12.5 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="15.5" cy="7.5" r="1.4" fill="currentColor"/></svg>
+      <h3>Smart pricing</h3><p>Get price recommendations that balance demand, inventory and configurable limits, with a plain-language reason for every suggestion.</p>
+    </div>
+    <div class="lp-feature">
+      <svg class="feature-icon" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="4" rx="1" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 9V18C4.5 18.55 4.95 19 5.5 19H18.5C19.05 19 19.5 18.55 19.5 18V9" stroke="currentColor" stroke-width="1.6"/><path d="M10 12.5H14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <h3>Inventory intelligence</h3><p>See exactly which products are at risk of stocking out or sitting on shelves too long, with concrete restocking guidance.</p>
+    </div>
+    <div class="lp-feature">
+      <svg class="feature-icon" viewBox="0 0 24 24" fill="none"><path d="M4 20V4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4 20H20" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M7.5 16V11.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M12 16V7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M16.5 16V13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <h3>Revenue insights</h3><p>Track revenue, sales volume and category performance with real analytics, not vanity charts.</p>
+    </div>
+    <div class="lp-feature">
+      <svg class="feature-icon" viewBox="0 0 24 24" fill="none"><path d="M6 9.5C6 6 8.5 3.5 12 3.5C15.5 3.5 18 6 18 9.5C18 14.5 20 16 20 16H4C4 16 6 14.5 6 9.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M10 18.5C10.3 19.4 11.1 20 12 20C12.9 20 13.7 19.4 14 18.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <h3>Proactive alerts</h3><p>Get notified about high demand, overstock risk, pricing opportunities and stockouts before they cost you money.</p>
+    </div>
+    <div class="lp-feature">
+      <svg class="feature-icon" viewBox="0 0 24 24" fill="none"><rect x="8" y="8" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 3V6M12 18V21M3 12H6M18 12H21M5.5 5.5L7.5 7.5M18.5 5.5L16.5 7.5M5.5 18.5L7.5 16.5M18.5 18.5L16.5 16.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <h3>Transparent AI</h3><p>Every prediction shows a confidence score, and every price change shows the reasoning behind it — never a black box.</p>
+    </div>
+  </div>
+</section>
+
+<section class="lp-section" id="benefits">
+  <div class="lp-section-head">
+    <h2>Built for how small businesses actually operate</h2>
+  </div>
+  <div class="lp-grid-4">
+    <div class="lp-feature"><h3>Avoid stockouts</h3><p>Know when a product is running low before customers notice.</p></div>
+    <div class="lp-feature"><h3>Reduce overstock</h3><p>Spot slow-moving inventory early and adjust before margins erode.</p></div>
+    <div class="lp-feature"><h3>Capture demand spikes</h3><p>Price ahead of predictable weekend and seasonal surges.</p></div>
+    <div class="lp-feature"><h3>Stay in control</h3><p>Set your own min/max price bounds — the AI recommends, you decide.</p></div>
+  </div>
+</section>
+
+<section class="lp-section" id="comparison">
+  <div class="lp-section-head">
+    <h2>What's included</h2>
+  </div>
+  <table class="lp-cmp-table">
+    <thead><tr><th>Capability</th><th>Spreadsheets</th><th>Generic POS</th><th>PricePulse</th></tr></thead>
+    <tbody>
+      <tr><td>AI demand forecasting</td><td class="no">—</td><td class="no">—</td><td class="yes">Yes</td></tr>
+      <tr><td>Dynamic price recommendations</td><td class="no">—</td><td class="no">—</td><td class="yes">Yes</td></tr>
+      <tr><td>Inventory risk detection</td><td class="no">Manual</td><td class="no">Basic</td><td class="yes">Automated</td></tr>
+      <tr><td>Price simulation</td><td class="no">—</td><td class="no">—</td><td class="yes">Yes</td></tr>
+      <tr><td>Business alerts</td><td class="no">—</td><td class="no">Limited</td><td class="yes">Yes</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="lp-cta">
+  <h2>Ready to price smarter?</h2>
+  <p>Set up your business in under two minutes.</p>
+  <a href="{% url 'accounts_register' %}" class="btn btn-accent">Get Started Free</a>
+</div>
+
+<section class="lp-section" id="faq">
+  <div class="lp-section-head">
+    <h2>Common questions</h2>
+  </div>
+  <div style="max-width:720px;margin:0 auto;">
+    <div class="lp-faq-item"><h4>What kind of businesses is this for?</h4><p>Grocery stores, bakeries, restaurants, cafes, clothing and electronics shops, pharmacies, salons and other local retail or service businesses.</p></div>
+    <div class="lp-faq-item"><h4>How much sales history do I need?</h4><p>At least 30 sales records to train an initial model — the more history you have, the more accurate the forecasts become.</p></div>
+    <div class="lp-faq-item"><h4>Can I control how much prices can change?</h4><p>Yes. You set minimum and maximum prices per product, and the platform enforces configurable maximum increase/decrease limits.</p></div>
+    <div class="lp-faq-item"><h4>Is my business data shared with other businesses?</h4><p>No. Each business owner only ever sees their own products, sales, forecasts and recommendations.</p></div>
+  </div>
+</section>
+
+<footer class="lp-footer">
+  <div>
+    <div class="logo mb-12">
+      <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><rect width="22" height="22" rx="6" fill="#2563eb"/><path d="M6 15.5V7.5C6 7.5 7 6.5 9 6.5C11.5 6.5 11.5 9 9 9C7.5 9 6 9 6 9" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 15.5L13 11.5C13 11.5 13.8 10.5 15 10.5C16.8 10.5 16.8 12.7 15 12.7C13.9 12.7 13 12.7 13 12.7" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/></svg>
+      PricePulse
+    </div>
+    <p style="max-width:260px;">AI-powered demand forecasting and dynamic pricing for local businesses.</p>
+  </div>
+  <div class="lp-footer-cols">
+    <div><h5>Product</h5><a href="#features">Features</a><a href="#how-it-works">How it works</a><a href="#comparison">Comparison</a></div>
+    <div><h5>Account</h5><a href="{% url 'accounts_login' %}">Log In</a><a href="{% url 'accounts_register' %}">Sign Up</a></div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Overview{% endblock %}
+{% block page_title %}Good morning, {{ business.owner_name|default:business.business_name }}{% endblock %}
+{% block page_sub %}Here's what's happening at {{ business.business_name }} today.{% endblock %}
+
+{% block content %}
+<div class="grid grid-4 mb-24">
+  <div class="card kpi-card">
+    <div class="label">This Week's Revenue</div>
+    <div class="value">{{ week_revenue|floatformat:0 }}</div>
+    <span class="trend {% if revenue_growth > 0 %}up{% elif revenue_growth < 0 %}down{% else %}flat{% endif %}">
+      {% if revenue_growth > 0 %}▲{% elif revenue_growth < 0 %}▼{% else %}—{% endif %} {{ revenue_growth }}%
+    </span>
+  </div>
+  <div class="card kpi-card">
+    <div class="label">Today's Revenue</div>
+    <div class="value" id="kpi-today-revenue">₹{{ today_revenue|floatformat:0 }}</div>
+    <span class="text-sm text-muted">Updated live from sales records</span>
+  </div>
+  <div class="card kpi-card">
+    <div class="label">Low Stock Products</div>
+    <div class="value">{{ low_stock_count }}</div>
+    <span class="text-sm text-muted">out of {{ product_count }} products</span>
+  </div>
+  <div class="card kpi-card">
+    <div class="label">Pricing Opportunities</div>
+    <div class="value" id="kpi-pricing-opps">—</div>
+    <span class="text-sm text-muted">{% if not has_model %}Train the AI model to see recommendations{% else %}from Smart Pricing{% endif %}</span>
+  </div>
+</div>
+
+{% if not has_model %}
+<div class="card mb-24">
+  <div class="empty-state" style="padding:24px;">
+    <h3>Your AI model hasn't been trained yet</h3>
+    <p>Once there's enough sales history, run <code>python manage.py train_demand_model</code> (or use the AI Model page) to unlock demand forecasts and smart pricing.</p>
+    <a href="{% url 'dashboard_model' %}" class="btn btn-accent">Go to AI Model</a>
+  </div>
+</div>
+{% endif %}
+
+<div class="grid grid-2 mb-24">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-title">Revenue Trend</div>
+        <div class="section-sub">Last 30 days</div>
+      </div>
+    </div>
+    <div class="chart-box"><canvas id="revenueChart"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-title">Sales Volume</div>
+        <div class="section-sub">Units sold, last 30 days</div>
+      </div>
+    </div>
+    <div class="chart-box"><canvas id="volumeChart"></canvas></div>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <div class="section-title mb-12">Top Products (30d)</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Product</th><th>Units</th><th>Revenue</th></tr></thead>
+        <tbody id="top-products-body"><tr><td colspan="3"><div class="skeleton" style="height:14px;"></div></td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title mb-12">Recent Alerts</div>
+    <ul id="recent-alerts-list" class="text-sm">
+      <li class="skeleton" style="height:40px;margin-bottom:8px;"></li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const data = await ppFetch("/api/analytics/revenue/?range=30d");
+    const labels = data.daily.map(d => d.date.slice(5));
+    new Chart(document.getElementById("revenueChart"), {
+      type: "line",
+      data: { labels, datasets: [{ label: "Revenue", data: data.daily.map(d => d.revenue),
+        borderColor: "#2563eb", backgroundColor: "rgba(37,99,235,.08)", fill: true, tension: .35, pointRadius: 0 }] },
+      options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+    new Chart(document.getElementById("volumeChart"), {
+      type: "bar",
+      data: { labels, datasets: [{ label: "Units", data: data.daily.map(d => d.units), backgroundColor: "#14213d", borderRadius: 4 }] },
+      options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+
+    const tbody = document.getElementById("top-products-body");
+    tbody.innerHTML = data.top_products.slice(0, 6).map(p =>
+      `<tr><td>${p.product_name}</td><td>${p.units}</td><td>${ppINR(p.revenue)}</td></tr>`
+    ).join("") || `<tr><td colspan="3" class="text-muted">No sales yet</td></tr>`;
+  } catch (e) { ppToast(e.message, "error"); }
+
+  try {
+    const alerts = await ppFetch("/api/alerts/?unread=true");
+    const list = document.getElementById("recent-alerts-list");
+    list.innerHTML = alerts.slice(0, 5).map(a =>
+      `<li class="mb-12"><span class="badge badge-${a.severity === 'critical' ? 'critical' : a.severity === 'warning' ? 'low' : 'info'}">${a.severity}</span>
+       <div class="mb-8" style="margin-top:6px;"><strong>${a.title}</strong><div class="text-muted">${a.message}</div></div></li>`
+    ).join("") || `<li class="text-muted">No unread alerts</li>`;
+  } catch (e) { /* alerts are non-critical for the page */ }
+
+  try {
+    const recs = await ppFetch("/api/pricing/recommendations/");
+    const opportunities = recs.filter(r => Math.abs(r.price_change_percentage) > 0.5).length;
+    document.getElementById("kpi-pricing-opps").textContent = opportunities;
+  } catch (e) { document.getElementById("kpi-pricing-opps").textContent = "0"; }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Analytics{% endblock %}
+{% block page_title %}Analytics{% endblock %}
+{% block page_sub %}Deeper business performance insights{% endblock %}
+
+{% block content %}
+<div class="pill-tabs mb-24" id="range-tabs">
+  <button data-range="7d">7D</button>
+  <button data-range="30d" class="active">30D</button>
+  <button data-range="90d">90D</button>
+</div>
+
+<div class="grid grid-3 mb-24">
+  <div class="card kpi-card"><div class="label">Total Revenue</div><div class="value" id="an-total-revenue">—</div></div>
+  <div class="card kpi-card"><div class="label">Units Sold</div><div class="value" id="an-total-units">—</div></div>
+  <div class="card kpi-card"><div class="label">Avg Order Value</div><div class="value" id="an-aov">—</div></div>
+</div>
+
+<div class="card mb-24">
+  <div class="section-title mb-12">Revenue Over Time</div>
+  <div class="chart-box"><canvas id="an-revenue-chart"></canvas></div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <div class="section-title mb-12">Category Performance</div>
+    <div class="chart-box sm"><canvas id="an-category-chart"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="section-title mb-12">Top Products</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Product</th><th>Units</th><th>Revenue</th></tr></thead>
+        <tbody id="an-top-products"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let revChart, catChart;
+async function loadAnalytics(range) {
+  try {
+    const data = await ppFetch(`/api/analytics/revenue/?range=${range}`);
+    document.getElementById("an-total-revenue").textContent = ppINR(data.totals.revenue);
+    document.getElementById("an-total-units").textContent = data.totals.units;
+    document.getElementById("an-aov").textContent = ppINR(data.totals.avg_order_value);
+
+    const labels = data.daily.map(d => d.date.slice(5));
+    if (revChart) revChart.destroy();
+    revChart = new Chart(document.getElementById("an-revenue-chart"), {
+      type: "line",
+      data: { labels, datasets: [{ label: "Revenue", data: data.daily.map(d => d.revenue), borderColor: "#2563eb", backgroundColor: "rgba(37,99,235,.08)", fill: true, tension: .3, pointRadius: 0 }] },
+      options: { plugins: { legend: { display: false } } }
+    });
+
+    if (catChart) catChart.destroy();
+    catChart = new Chart(document.getElementById("an-category-chart"), {
+      type: "bar",
+      data: { labels: data.category_performance.map(c => c.category), datasets: [{ label: "Revenue", data: data.category_performance.map(c => c.revenue), backgroundColor: "#14213d", borderRadius: 4 }] },
+      options: { indexAxis: "y", plugins: { legend: { display: false } } }
+    });
+
+    document.getElementById("an-top-products").innerHTML = data.top_products.map(p =>
+      `<tr><td>${p.product_name}</td><td>${p.units}</td><td>${ppINR(p.revenue)}</td></tr>`
+    ).join("") || `<tr><td colspan="3" class="text-muted">No data</td></tr>`;
+  } catch (e) { ppToast(e.message, "error"); }
+}
+
+document.querySelectorAll("#range-tabs button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#range-tabs button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    loadAnalytics(btn.dataset.range);
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => loadAnalytics("30d"));
+</script>
+{% endblock %}

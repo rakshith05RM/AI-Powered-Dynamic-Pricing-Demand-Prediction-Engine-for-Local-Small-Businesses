@@ -1,0 +1,29 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Inventory{% endblock %}
+{% block page_title %}Inventory{% endblock %}
+{% block page_sub %}Stock health and restocking recommendations{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="section-title">Inventory Intelligence</div>
+    <div class="flex gap-8">
+      <span class="badge badge-critical">Critical</span>
+      <span class="badge badge-low">Low</span>
+      <span class="badge badge-healthy">Healthy</span>
+      <span class="badge badge-overstocked">Overstocked</span>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Product</th><th>Stock</th><th>Daily Demand</th><th>Days Remaining</th><th>Status</th><th>Recommended Action</th></tr></thead>
+      <tbody id="inventory-body"><tr><td colspan="6"><div class="skeleton" style="height:14px;"></div></td></tr></tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/inventory.js' %}"></script>
+{% endblock %}

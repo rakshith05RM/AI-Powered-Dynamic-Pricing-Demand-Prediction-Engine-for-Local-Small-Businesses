@@ -1,0 +1,26 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Alerts{% endblock %}
+{% block page_title %}Business Alerts{% endblock %}
+{% block page_sub %}Demand, pricing and inventory signals that need attention{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="section-title">All Alerts</div>
+    <div class="pill-tabs" id="alert-filter-tabs">
+      <button data-filter="all" class="active">All</button>
+      <button data-filter="unread">Unread</button>
+    </div>
+  </div>
+  <ul id="alerts-list"></ul>
+  <div id="alerts-empty" class="empty-state" style="display:none;">
+    <h3>No alerts</h3>
+    <p>You're all caught up. New alerts will appear here as demand, pricing and inventory patterns change.</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/alerts.js' %}"></script>
+{% endblock %}

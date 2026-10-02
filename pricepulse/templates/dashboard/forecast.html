@@ -1,0 +1,60 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Demand Forecast{% endblock %}
+{% block page_title %}Demand Forecast{% endblock %}
+{% block page_sub %}AI-predicted demand for your products{% endblock %}
+
+{% block content %}
+{% if not has_model %}
+<div class="card empty-state">
+  <h3>No trained model yet</h3>
+  <p>Import sales data and train the AI model to generate demand forecasts.</p>
+  <a href="{% url 'dashboard_model' %}" class="btn btn-accent">Go to AI Model</a>
+</div>
+{% else %}
+<div class="card mb-24">
+  <div class="flex gap-16" style="flex-wrap:wrap;">
+    <div class="form-group" style="min-width:220px;margin-bottom:0;">
+      <label>Product</label>
+      <select id="f-product">
+        {% for p in products %}<option value="{{ p.id }}">{{ p.product_name }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label>Forecast Horizon</label>
+      <div class="pill-tabs" id="horizon-tabs">
+        <button data-days="7" class="active">7 days</button>
+        <button data-days="14">14 days</button>
+        <button data-days="30">30 days</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-4 mb-24">
+  <div class="card kpi-card"><div class="label">Current Demand</div><div class="value" id="kpi-current">—</div><div class="text-sm text-muted">units/day (14d avg)</div></div>
+  <div class="card kpi-card"><div class="label">Predicted Demand</div><div class="value" id="kpi-predicted">—</div><div class="text-sm text-muted">units/day (forecast avg)</div></div>
+  <div class="card kpi-card"><div class="label">Expected Growth</div><div class="value" id="kpi-growth">—</div></div>
+  <div class="card kpi-card"><div class="label">Confidence</div><div class="value" id="kpi-confidence">—</div></div>
+</div>
+
+<div class="card mb-24">
+  <div class="section-title mb-12">Historical vs Predicted Demand</div>
+  <div class="chart-box"><canvas id="forecastChart"></canvas></div>
+</div>
+
+<div class="card">
+  <div class="section-title mb-12">Forecast Breakdown</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Date</th><th>Predicted Demand</th><th>Confidence</th></tr></thead>
+      <tbody id="forecast-body"></tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/forecast.js' %}"></script>
+{% endblock %}

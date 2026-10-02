@@ -1,0 +1,72 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Smart Pricing{% endblock %}
+{% block page_title %}Smart Pricing{% endblock %}
+{% block page_sub %}AI-recommended prices based on demand and inventory{% endblock %}
+
+{% block content %}
+{% if not has_model %}
+<div class="card empty-state">
+  <h3>No trained model yet</h3>
+  <p>Import sales data and train the AI model to generate pricing recommendations.</p>
+  <a href="{% url 'dashboard_model' %}" class="btn btn-accent">Go to AI Model</a>
+</div>
+{% else %}
+<div class="card mb-24">
+  <div class="card-header">
+    <div>
+      <div class="section-title">Price Recommendations</div>
+      <div class="section-sub">Generated from predicted demand, inventory and configured pricing limits</div>
+    </div>
+    <button class="btn btn-secondary btn-sm" id="refresh-recs">Refresh</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Product</th><th>Current Price</th><th>Predicted Demand</th><th>Recommended Price</th><th>Change</th><th>Expected Revenue</th><th></th></tr></thead>
+      <tbody id="recs-body"><tr><td colspan="7"><div class="skeleton" style="height:14px;"></div></td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title mb-4">Price Simulator</div>
+  <div class="section-sub">Drag the slider to see estimated demand and revenue at a different price</div>
+  <div class="grid grid-2" style="margin-top:14px;">
+    <div>
+      <div class="form-group">
+        <label>Product</label>
+        <select id="sim-product">{% for p in products %}<option value="{{ p.id }}" data-min="{{ p.minimum_price }}" data-max="{{ p.maximum_price }}" data-current="{{ p.current_price }}">{{ p.product_name }}</option>{% endfor %}</select>
+      </div>
+      <div class="form-group">
+        <label>Price: <span id="sim-price-label">—</span></label>
+        <input type="range" id="sim-price-slider" style="width:100%;">
+      </div>
+      <div class="grid grid-2 mb-16">
+        <div class="card" style="padding:14px;"><div class="text-sm text-muted">Current Price</div><div style="font-size:20px;font-weight:700;" id="sim-current-price">—</div></div>
+        <div class="card" style="padding:14px;"><div class="text-sm text-muted">Current Revenue</div><div style="font-size:20px;font-weight:700;" id="sim-current-revenue">—</div></div>
+      </div>
+      <div class="grid grid-2">
+        <div class="card" style="padding:14px;background:var(--accent-soft);"><div class="text-sm text-muted">Estimated Demand</div><div style="font-size:20px;font-weight:700;" id="sim-demand">—</div></div>
+        <div class="card" style="padding:14px;background:var(--accent-soft);"><div class="text-sm text-muted">Estimated Revenue</div><div style="font-size:20px;font-weight:700;" id="sim-revenue">—</div><div class="text-sm" id="sim-revenue-change">—</div></div>
+      </div>
+    </div>
+    <div class="chart-box"><canvas id="simChart"></canvas></div>
+  </div>
+</div>
+{% endif %}
+
+<div class="modal-overlay" id="apply-modal">
+  <div class="modal">
+    <h3>Apply new price?</h3>
+    <p id="apply-modal-text"></p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="apply-cancel">Cancel</button>
+      <button class="btn btn-accent" id="apply-confirm">Apply New Price</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/pricing.js' %}"></script>
+{% endblock %}

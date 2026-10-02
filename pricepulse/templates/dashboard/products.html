@@ -1,0 +1,90 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% block title %}Products{% endblock %}
+{% block page_title %}Products{% endblock %}
+{% block page_sub %}Manage your catalog, pricing bounds and stock levels{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="flex gap-12">
+      <input type="text" id="search-input" placeholder="Search products..." style="width:240px;">
+      <select id="category-filter">
+        <option value="">All categories</option>
+        <option value="bakery">Bakery</option><option value="beverages">Beverages</option>
+        <option value="dairy">Dairy</option><option value="grocery">Grocery</option>
+        <option value="snacks">Snacks</option><option value="clothing">Clothing</option>
+        <option value="electronics">Electronics</option><option value="pharmacy">Pharmacy</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <button class="btn btn-accent" id="add-product-btn">+ Add Product</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Product</th><th>Category</th><th>SKU</th><th>Cost</th><th>Price</th><th>Stock</th><th>Reorder Lvl</th><th></th></tr></thead>
+      <tbody id="products-body"></tbody>
+    </table>
+  </div>
+  <div id="products-empty" class="empty-state" style="display:none;">
+    <h3>No products yet</h3>
+    <p>Add your first product to start tracking sales and demand.</p>
+    <button class="btn btn-accent" onclick="document.getElementById('add-product-btn').click()">+ Add Product</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="product-modal">
+  <div class="modal">
+    <h3 id="product-modal-title">Add Product</h3>
+    <form id="product-form">
+      <input type="hidden" id="p-id">
+      <div class="form-group"><label>Product Name</label><input type="text" id="p-name" required></div>
+      <div class="grid grid-2">
+        <div class="form-group"><label>Category</label>
+          <select id="p-category">
+            <option value="bakery">Bakery</option><option value="beverages">Beverages</option>
+            <option value="dairy">Dairy</option><option value="grocery">Grocery</option>
+            <option value="snacks">Snacks</option><option value="clothing">Clothing</option>
+            <option value="electronics">Electronics</option><option value="pharmacy">Pharmacy</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>SKU</label><input type="text" id="p-sku" required></div>
+      </div>
+      <div class="form-group"><label>Description</label><textarea id="p-description" rows="2"></textarea></div>
+      <div class="grid grid-2">
+        <div class="form-group"><label>Cost Price (₹)</label><input type="number" step="0.01" id="p-cost" required></div>
+        <div class="form-group"><label>Selling Price (₹)</label><input type="number" step="0.01" id="p-price" required></div>
+      </div>
+      <div class="grid grid-2">
+        <div class="form-group"><label>Minimum Price (₹)</label><input type="number" step="0.01" id="p-min" required></div>
+        <div class="form-group"><label>Maximum Price (₹)</label><input type="number" step="0.01" id="p-max" required></div>
+      </div>
+      <div class="grid grid-2">
+        <div class="form-group"><label>Stock Quantity</label><input type="number" id="p-stock" required></div>
+        <div class="form-group"><label>Reorder Level</label><input type="number" id="p-reorder" required></div>
+      </div>
+      <div class="field-error" id="p-error" style="display:none;"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="product-cancel">Cancel</button>
+        <button type="submit" class="btn btn-accent">Save Product</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <h3>Delete this product?</h3>
+    <p>This will permanently remove the product. This cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="delete-cancel">Cancel</button>
+      <button class="btn btn-danger" id="delete-confirm">Delete</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/products.js' %}"></script>
+{% endblock %}
